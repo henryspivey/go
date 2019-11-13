@@ -71,10 +71,9 @@ func CreateSurvey(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(survey)
 }
 
-func GetSurvey(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+func GetSurvey(w http.ResponseWriter, r *http.Request) {	
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	 w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	params := mux.Vars(r)	
 	payload := GetSurveyById(params["id"])
 	json.NewEncoder(w).Encode(payload)
