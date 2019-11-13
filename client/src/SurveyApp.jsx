@@ -44,7 +44,7 @@ class SurveyApp extends Component {
 		// const votes = Array.from({ length: options.length }, () => 0);
 		axios
 			.post(
-				`/api/survey`,
+				"/api/survey",
 				{
 					questions,
 					votes
@@ -64,9 +64,8 @@ class SurveyApp extends Component {
 		this.setState({ question: "", options: [{ text: "", selected: false }] });
 	};
 
-	getSurveys = () => {
-		const url = "/api/survey";
-		axios.get(url).then(res => {
+	getSurveys = () => {		
+		axios.get("/api/survey").then(res => {
 			const data = res.data;
 			if (data) {
 				this.setState({
