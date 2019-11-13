@@ -10,12 +10,7 @@ function App() {
     <Grid padded>
     	<Grid.Row>
     	<Grid.Column>	      
-        <Router>
-	        <Switch>
-	          <Route path='/' exact component={SurveyApp} />
-	          <Route path='/api/survey/:id' component={Survey} />
-	        </Switch>
-      	</Router>  
+        <SurveyApp />
       </Grid.Column>	    
       </Grid.Row>      
     </Grid>    
