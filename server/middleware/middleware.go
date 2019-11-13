@@ -59,19 +59,13 @@ func GetAllSurveys(w http.ResponseWriter, r *http.Request) {
 
 
 func CreateSurvey(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var survey models.Survey
 	_ = json.NewDecoder(r.Body).Decode(&survey)	
 	insertOneSurvey(survey)
 	json.NewEncoder(w).Encode(survey)
 }
 
-func GetSurvey(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+func GetSurvey(w http.ResponseWriter, r *http.Request) {	
 	params := mux.Vars(r)	
 	payload := GetSurveyById(params["id"])
 	json.NewEncoder(w).Encode(payload)
