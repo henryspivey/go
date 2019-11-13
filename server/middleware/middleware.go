@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"	
-	"survey-app/models"
+	"survey-app/server/models"
 	"github.com/gorilla/mux"	
 
 	"go.mongodb.org/mongo-driver/bson"

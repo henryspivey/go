@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"survey-app/router"
+	"survey-app/server/router"
 )
 
 func main() {

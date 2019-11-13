@@ -1,7 +1,7 @@
 package router
 
 import (
-	"survey-app/middleware"
+	"survey-app/server/middleware"
 	"github.com/gorilla/mux"
 )
 
