@@ -12,8 +12,8 @@ function App() {
     	<Grid.Column>	      
         <Router>
 	        <Switch>
-	          <Route path='/' exact component={SurveyApp} />
-	          <Route path='/survey/:id' exact component={Survey} />
+	          <Route exact path='/' component={SurveyApp} />
+	          <Route path='/survey/:id' component={Survey} />
 	        </Switch>
       	</Router>  
       </Grid.Column>	    
