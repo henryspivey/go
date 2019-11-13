@@ -2,8 +2,7 @@ package middleware
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
+	"encoding/json"	
 	"log"
 	"net/http"	
 	"survey-app/server/models"
@@ -47,18 +46,13 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println("Connected to MongoDB!")
-
+	
 	collection = client.Database(dbName).Collection(collName)
-
-	fmt.Println("Collection instance created!")
+	
 }
 
 // GetAllSurveys get all the survey route
-func GetAllSurveys(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+func GetAllSurveys(w http.ResponseWriter, r *http.Request) {	
 	payload := getAllSurveys()
 	json.NewEncoder(w).Encode(payload)
 }
@@ -78,8 +72,7 @@ func CreateSurvey(w http.ResponseWriter, r *http.Request) {
 func GetSurvey(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	params := mux.Vars(r)
-	fmt.Println("modified count: testing")
+	params := mux.Vars(r)	
 	payload := GetSurveyById(params["id"])
 	json.NewEncoder(w).Encode(payload)
 
@@ -88,8 +81,7 @@ func GetSurvey(w http.ResponseWriter, r *http.Request) {
 func VoteSurvey(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var vote models.Vote
-	_ = json.NewDecoder(r.Body).Decode(&vote)	
-	fmt.Println("vote: ", vote)
+	_ = json.NewDecoder(r.Body).Decode(&vote)		
 	voteSurvey(params["id"], vote)
 	json.NewEncoder(w).Encode(vote)
 }
@@ -104,7 +96,7 @@ func GetSurveyById(survey string) models.Survey  {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("found by id", result)
+	
 	return result
 }
 
@@ -118,7 +110,7 @@ func voteSurvey(survey string, vote models.Vote) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("modified count: ", result)
+	
 }
 
 // get all surveys from the DB and return it
@@ -150,7 +142,7 @@ func insertOneSurvey(survey models.Survey) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Inserted a Single Record ", insertResult)
+	
 }
 
 

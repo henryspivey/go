@@ -26,7 +26,7 @@ class SurveyApp extends Component {
 	}
 
 	componentDidMount() {
-		this.getTask();
+		this.getSurveys();
 	}
 
 	onQuestionChange = (idx) => e => {
@@ -56,7 +56,7 @@ class SurveyApp extends Component {
 				}
 			)
 			.then(res => {				
-				this.getTask();
+				this.getSurveys();
 			})
 			.catch(function(error) {
 				console.log(error);
@@ -64,7 +64,7 @@ class SurveyApp extends Component {
 		this.setState({ question: "", options: [{ text: "", selected: false }] });
 	};
 
-	getTask = () => {
+	getSurveys = () => {
 		const url = "/api/survey";
 		axios.get(url).then(res => {
 			const data = res.data;
