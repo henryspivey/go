@@ -5,6 +5,7 @@ import {
 	List
 
 } from "semantic-ui-react";
+import { Link } from 'react-router-dom'
 import QuestionBuilder from './QuestionBuilder';
 
 const SurveyCard = props => {
@@ -19,7 +20,7 @@ const SurveyCard = props => {
 				))}				
 			</Card.Content>
 			<Card.Content extra>
-				<Button href={`/survey/${_id}`} color="blue" content="Take Survey" />
+				<Link to={`/survey/${_id}`}>Take Survey</Link>
 			</Card.Content>
 		</Card>
 	);
