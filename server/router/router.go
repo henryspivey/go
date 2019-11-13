@@ -1,6 +1,7 @@
 package router
 
 import (
+	"net/http"	
 	"survey-app/server/middleware"
 	"github.com/gorilla/mux"
 )
@@ -8,10 +9,10 @@ import (
 // Router is exported and used in main.go
 func Router() *mux.Router {
 	router := mux.NewRouter()
-	buildHandler := http.FileServer(http.Dir("./client/build"))
+	buildHandler := http.FileServer(http.Dir("../../client/build"))
 	router.PathPrefix("/").Handler(buildHandler)
 
-	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir("./client/build/static")))
+	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir("../../client/build/static")))
 	router.PathPrefix("/static/").Handler(staticHandler)
 	router.HandleFunc("/api/survey", middleware.GetAllSurveys).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/survey/{id}", middleware.GetSurvey).Methods("GET", "OPTIONS")
