@@ -2,9 +2,7 @@ package main
 
 import (	
 	"os"
-	"net/http"
-
-	"survey-app/server/router"
+	"net/http"	
 )
 
 func getPort() string {
