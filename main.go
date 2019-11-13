@@ -22,7 +22,7 @@ func main() {
 	r.PathPrefix("/").Handler(buildHandler)
 
 	staticHandler := http.StripPrefix("/static/", http.FileServer(http.Dir("./client/build/static")))
-	router.PathPrefix("/static/").Handler(staticHandler)
+	r.PathPrefix("/static/").Handler(staticHandler)
 	port := getPort()
 	log.Fatal(http.ListenAndServe(port, r))	
 }
