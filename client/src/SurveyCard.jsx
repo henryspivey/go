@@ -19,7 +19,7 @@ const SurveyCard = props => {
 				))}				
 			</Card.Content>
 			<Card.Content extra>
-				<Button href={`/api/survey/${_id}`} color="blue" content="Take Survey" />
+				<Button href={`/survey/${_id}`} color="blue" content="Take Survey" />
 			</Card.Content>
 		</Card>
 	);
