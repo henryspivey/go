@@ -1,8 +1,11 @@
 package main
 
 import (	
+	"log"
 	"os"
-	"net/http"	
+	"net/http"
+
+	"survey-app/server/router"
 )
 
 func getPort() string {
@@ -14,9 +17,9 @@ func getPort() string {
 }
 
 func main() {
-	//r := router.Router()	
+	r := router.Router()	
 	fs := http.FileServer(http.Dir("build"))
 	http.Handle("/", fs)
-	// port := getPort()
-	// log.Fatal(http.ListenAndServe(port, r))	
+	port := getPort()
+	log.Fatal(http.ListenAndServe(port, r))	
 }
