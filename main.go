@@ -18,7 +18,7 @@ func getPort() string {
 
 func main() {
 	r := router.Router()	
-	buildHandler := http.FileServer(http.Dir("client/build/index.html"))
+	buildHandler := http.FileServer(http.Dir("/client/build/index.html"))
 	r.PathPrefix("/").Handler(buildHandler)
 	port := getPort()
 	  log.Fatal(http.ListenAndServe(port, r))	
