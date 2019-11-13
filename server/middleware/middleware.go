@@ -106,7 +106,7 @@ func voteSurvey(survey string, vote models.Vote) {
 	filter := bson.M{"_id": id}	
 	
 	update := bson.M{"$push": bson.M{"votes": vote}}
-	result, err := collection.UpdateOne(context.Background(),filter,update)
+	_, err := collection.UpdateOne(context.Background(),filter,update)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -138,7 +138,7 @@ func getAllSurveys() []primitive.M {
 
 // Insert one survey in the DB
 func insertOneSurvey(survey models.Survey) {
-	insertResult, err := collection.InsertOne(context.Background(), survey)
+	_, err := collection.InsertOne(context.Background(), survey)
 	if err != nil {
 		log.Fatal(err)
 	}
