@@ -1,7 +1,6 @@
 package main
 
-import (
-	"fmt"
+import (	
 	"log"
 	"os"
 	"net/http"
