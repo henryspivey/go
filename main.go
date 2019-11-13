@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"net/http"
 
 	"survey-app/server/router"
@@ -13,14 +14,11 @@ func getPort() string {
   if p != "" {
     return ":" + p
   }
-  return ":3000"
+  return ":8080"
 }
 
 func main() {
-	r := router.Router()
-	// fs := http.FileServer(http.Dir("build"))
-	// http.Handle("/", fs)
-	fmt.Println("Starting server on the port 3001...")
+	r := router.Router()	
 	port := getPort()
 	  log.Fatal(http.ListenAndServe(port, r))	
 }
