@@ -78,10 +78,6 @@ func CreateSurvey(w http.ResponseWriter, r *http.Request) {
 	if oid, ok := id.(primitive.ObjectID); ok {
 	    json.NewEncoder(w).Encode("https://limitless-garden-10375.herokuapp.com/survey/"+oid.Hex())
 	}
-	
-	
-	
-
 		
 }
 
@@ -91,9 +87,6 @@ func GetSurvey(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)	
 	payload := GetSurveyById(params["id"])
 	json.NewEncoder(w).Encode(payload)
-
-
-
 }
 
 func VoteSurvey(w http.ResponseWriter, r *http.Request) {
