@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import countryOptions from "./countries";
+
 import {
 	Form,
 	Header,
@@ -11,6 +12,7 @@ import {
 	Input,
 	Message
 } from "semantic-ui-react";
+import GeneralError from "./GeneralError";
 
 export default class Survey extends Component {
 	constructor(props) {
@@ -24,8 +26,10 @@ export default class Survey extends Component {
 			questions: [],
 			ageValid: false,
 			emailValid: false,
+			countryValid: false,
 			disabled: true,
-			voted: false
+			voted: false,
+			generalError: false
 		};
 	}
 
@@ -39,10 +43,17 @@ export default class Survey extends Component {
 	onSubmit = () => {
 		const { id } = this.props.match.params;
 		let { age } = this.state;
-		const { country, email, questions, disabled } = this.state;
+		const {
+			country,
+			email,
+			questions,
+			disabled,
+			voted,
+			generalError
+		} = this.state;
 		age = parseInt(age);
 
-		const validVotes = questions.map(question => {			
+		const validVotes = questions.map(question => {
 			if (!disabled) {
 				return {
 					question: `${question.question}`,
@@ -53,7 +64,7 @@ export default class Survey extends Component {
 			}
 		});
 
-		if (!disabled) {
+		if (!voted) {
 			axios
 				.post(
 					`/api/survey/${id}/vote`,
@@ -70,17 +81,17 @@ export default class Survey extends Component {
 					}
 				)
 				.then(response => {
-					this.setState({ voted: !this.state.voted });
+					this.setState({ voted: !voted });
 				})
-				.catch(function(error) {
-					console.log(error);
+				.catch(error => {
+					this.setState({ generalError: !generalError });
 				});
 		}
 	};
 
 	handleRadioChange = ({ target }) => {
 		const questions = this.state.questions;
-		const newOptions = questions.map((question, i) => {			
+		const newOptions = questions.map((question, i) => {
 			if (question.question !== target.name) return question;
 			return {
 				...question,
@@ -105,6 +116,7 @@ export default class Survey extends Component {
 	validateField = (fieldName, value) => {
 		let emailValid = this.state.emailValid;
 		let ageValid = this.state.ageValid;
+		let countryValid = this.state.countryValid;
 
 		switch (fieldName) {
 			case "email":
@@ -114,9 +126,11 @@ export default class Survey extends Component {
 					value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i).length > 0;
 				break;
 			case "age":
-				const parsed = parseInt(value)
+				const parsed = parseInt(value);
 				ageValid = parsed > 0 && !isNaN(parsed);
-				
+				break;
+			case "country":
+				countryValid = value.length > 0;
 				break;
 			default:
 				break;
@@ -125,24 +139,28 @@ export default class Survey extends Component {
 		this.setState(
 			{
 				emailValid,
-				ageValid
+				ageValid,
+				countryValid
 			},
 			() => {
-				this.validateForm(emailValid, ageValid)
+				this.validateForm(emailValid, ageValid, countryValid);
 			}
 		);
 	};
 
-	validateForm = (emailValid, ageValid) => {
-		console.log(emailValid, ageValid)
-		this.setState({ disabled: emailValid && ageValid });
+	validateForm = (emailValid, ageValid, countryValid) => {
+		this.setState({ disabled: emailValid && ageValid && countryValid });
 	};
 
 	selectCountry = (e, data) => {
-		this.setState({ country: data.value });
+		let value = data.value;
+		this.setState({ country: value }, () =>
+			this.validateField("country", value)
+		);
 	};
 
 	getSurvey = id => {
+		const { generalError } = this.state;
 		axios
 			.get(`/api/survey/${id}`)
 			.then(response => {
@@ -152,8 +170,8 @@ export default class Survey extends Component {
 					loading: false
 				});
 			})
-			.catch(function(error) {
-				console.log(error);
+			.catch(error => {
+				this.setState({ generalError: !generalError });
 			});
 	};
 
@@ -164,10 +182,9 @@ export default class Survey extends Component {
 				country,
 				age,
 				email,
-				emailValid,
-				ageValid,
 				disabled,
-				voted
+				voted,
+				generalError
 			} = this.state;
 			return (
 				<div>
@@ -181,7 +198,7 @@ export default class Survey extends Component {
 										</Header>
 										{question.options &&
 											question.options.map((option, optionIdx) => (
-												<Form.Field>
+												<Form.Field key={optionIdx}>
 													<Header sub textAlign="left">
 														{option.text}
 													</Header>
@@ -253,7 +270,12 @@ export default class Survey extends Component {
 									}
 									content="You're all set."
 								/>
-								<Button type="submit" content="Vote" disabled={!disabled} />
+								<GeneralError visible={generalError} />
+								<Button
+									type="submit"
+									content="Vote"
+									disabled={!disabled && !voted}
+								/>
 							</Form>
 						</Card.Content>
 					</Card>

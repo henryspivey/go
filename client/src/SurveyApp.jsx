@@ -4,13 +4,13 @@ import {
 	Card,
 	Header,
 	Form,
-	Segment,
 	Grid,
 	Button,
 	Input,
 	Message
 } from "semantic-ui-react";
 import SurveyCard from "./SurveyCard";
+import GeneralError from "./GeneralError";
 
 class SurveyApp extends Component {
 	constructor(props) {
@@ -22,7 +22,8 @@ class SurveyApp extends Component {
 			votes: [],
 			disabled: false,
 			questionError: false,
-			optionError: false
+			optionError: false,
+			generalError: false
 		};
 	}
 
@@ -74,7 +75,7 @@ class SurveyApp extends Component {
 	};
 
 	onSubmit = () => {
-		let { questions, votes } = this.state;
+		let { questions, votes, generalError } = this.state;
 		axios
 			.post(
 				"/api/survey",
@@ -91,8 +92,8 @@ class SurveyApp extends Component {
 			.then(res => {
 				this.getSurveys();
 			})
-			.catch(function(error) {
-				console.log(error);
+			.catch(error => {
+				this.setState({ generalError: !generalError });
 			});
 		this.setState({ question: "", options: [{ text: "", selected: false }] });
 	};
@@ -131,12 +132,14 @@ class SurveyApp extends Component {
 	handleOptionChange = (idx, optionIdx) => e => {
 		const questions = this.state.questions;
 		let value = e.target.value;
-		
-		if (questions.length > 0) {			
-			const newOptions = questions && questions[idx].options.map((option, i) => {
-				if (i !== optionIdx) return option;
-				return { ...option, text: e.target.value };
-			});
+
+		if (questions.length > 0) {
+			const newOptions =
+				questions &&
+				questions[idx].options.map((option, i) => {
+					if (i !== optionIdx) return option;
+					return { ...option, text: e.target.value };
+				});
 			questions[idx].options = newOptions;
 			this.setState({ questions }, () => {
 				this.validateField("option", value);
@@ -145,7 +148,7 @@ class SurveyApp extends Component {
 	};
 
 	render() {
-		const { questions, questionError } = this.state;
+		const { questions, questionError, optionError, generalError } = this.state;
 		return (
 			<>
 				<Header as="h2">Survey App</Header>
@@ -188,13 +191,15 @@ class SurveyApp extends Component {
 								))}
 
 								<Message
-									visible={this.state.questionError || this.state.optionError}
+									visible={questionError || optionError}
 									error
 									header={
 										<Header as="h3" textAlign="left" content="Invalid Inputs" />
 									}
 									content="Please check your inputs again. All fields are required."
 								/>
+
+								<GeneralError visible={generalError} />
 							</Form.Field>
 							<Button
 								icon="plus"
@@ -215,17 +220,17 @@ class SurveyApp extends Component {
 					</Card.Content>
 				</Card>
 
-				<Grid.Row>					
-						<Header as="h2">Surveys</Header>
-						<Card.Group>
-							{this.state.surveys.length === 0 ? (
-								<Header>No surveys yet</Header>
-							) : (
-								this.state.surveys.map((item, index) => (
-									<SurveyCard key={item._id} {...item} index={index}/>
-								))
-							)}
-						</Card.Group>					
+				<Grid.Row>
+					<Header as="h2">Surveys</Header>
+					<Card.Group>
+						{this.state.surveys.length === 0 ? (
+							<Header>No surveys yet</Header>
+						) : (
+							this.state.surveys.map((item, index) => (
+								<SurveyCard key={item._id} {...item} index={index} />
+							))
+						)}
+					</Card.Group>
 				</Grid.Row>
 			</>
 		);

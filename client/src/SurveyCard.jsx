@@ -12,7 +12,7 @@ const SurveyCard = props => {
 				<Card.Header textAlign="left">{`Survey #${index + 1}`}</Card.Header>
 				<Card.Meta>Survey {_id}</Card.Meta>
 				{questions &&
-					questions.map(question => <QuestionBuilder question={question} />)}
+					questions.map((question,i) => <QuestionBuilder key={i} question={question} />)}
 			</Card.Content>
 			<Card.Content extra>
 				<Link to={`/survey/${_id}`}>
