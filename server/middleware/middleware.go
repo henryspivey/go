@@ -7,6 +7,7 @@ import (
 	"net/http"	
 	"survey-app/server/models"
 	"github.com/gorilla/mux"	
+	
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -55,8 +56,11 @@ func init() {
 func GetAllSurveys(w http.ResponseWriter, r *http.Request) {	
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
 	payload := getAllSurveys()
 	json.NewEncoder(w).Encode(payload)
+
+
 }
 
 func CreateSurvey(w http.ResponseWriter, r *http.Request) {
@@ -64,10 +68,21 @@ func CreateSurvey(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	
 	var survey models.Survey
-	_ = json.NewDecoder(r.Body).Decode(&survey)	
-	insertOneSurvey(survey)
-	json.NewEncoder(w).Encode(survey)
+	_ = json.NewDecoder(r.Body).Decode(&survey)		
+	var id interface{}
+
+	id= insertOneSurvey(survey)
+
+	if oid, ok := id.(primitive.ObjectID); ok {
+	    json.NewEncoder(w).Encode("https://limitless-garden-10375.herokuapp.com/survey/"+oid.Hex())
+	}
+	
+	
+	
+
+		
 }
 
 func GetSurvey(w http.ResponseWriter, r *http.Request) {	
@@ -76,6 +91,8 @@ func GetSurvey(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)	
 	payload := GetSurveyById(params["id"])
 	json.NewEncoder(w).Encode(payload)
+
+
 
 }
 
@@ -138,11 +155,13 @@ func getAllSurveys() []primitive.M {
 }
 
 // Insert one survey in the DB
-func insertOneSurvey(survey models.Survey) {
-	_, err := collection.InsertOne(context.Background(), survey)
+func insertOneSurvey(survey models.Survey) interface{} {
+	result, err := collection.InsertOne(context.Background(), survey)
 	if err != nil {
 		log.Fatal(err)
 	}
+	newID := result.InsertedID
+	return newID
 	
 }
 
