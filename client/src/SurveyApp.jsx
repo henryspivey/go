@@ -31,19 +31,50 @@ class SurveyApp extends Component {
 	}
 
 	onQuestionChange = idx => e => {
+		let value = e.target.value;
 		const questions = this.state.questions;
-		questions[idx].question = e.target.value;
-		if (questions[idx].question === "") {
-			this.setState({ questionError: !this.state.questionError });
-		} 
+		questions[idx].question = value;
+		this.setState(
+			{
+				questions
+			},
+			() => {
+				this.validateField("question", value);
+			}
+		);
+	};
+
+	validateField = (fieldName, value) => {
+		let questionError = this.state.questionError;
+		let optionError = this.state.optionError;
+		switch (fieldName) {
+			case "question":
+				questionError = value.length < 1;
+				break;
+			case "option":
+				optionError = value.length < 1;
+				break;
+			default:
+				break;
+		}
+
+		this.setState(
+			{
+				questionError,
+				optionError
+			},
+			this.validateForm
+		);
+	};
+
+	validateForm = () => {
 		this.setState({
-			questions
+			disabled: !this.state.questionError && !this.state.optionError
 		});
 	};
 
 	onSubmit = () => {
 		let { questions, votes } = this.state;
-
 		axios
 			.post(
 				"/api/survey",
@@ -97,23 +128,24 @@ class SurveyApp extends Component {
 		this.setState({ questions });
 	};
 
-
 	handleOptionChange = (idx, optionIdx) => e => {
 		const questions = this.state.questions;
-
-		const newOptions = questions[idx].options.map((option, i) => {
-			if (i !== optionIdx) return option;
-			if(e.target.value === "") {
-				this.setState({optionError: !this.state.optionError})
-			}
-			return { ...option, text: e.target.value };
-		});
-		questions[idx].options = newOptions;
-		this.setState({ questions });
+		let value = e.target.value;
+		
+		if (questions.length > 0) {			
+			const newOptions = questions && questions[idx].options.map((option, i) => {
+				if (i !== optionIdx) return option;
+				return { ...option, text: e.target.value };
+			});
+			questions[idx].options = newOptions;
+			this.setState({ questions }, () => {
+				this.validateField("option", value);
+			});
+		}
 	};
 
 	render() {
-		const { questions } = this.state;
+		const { questions, questionError } = this.state;
 		return (
 			<>
 				<Header as="h2">Survey App</Header>
@@ -142,7 +174,7 @@ class SurveyApp extends Component {
 														type="text"
 														placeholder="Please enter an option"
 														onChange={this.handleOptionChange(i, optionIdx)}
-													/>													
+													/>
 												</Form.Field>
 											</>
 										))}
@@ -152,14 +184,15 @@ class SurveyApp extends Component {
 											onClick={() => this.addOption(i)}
 											content="Add Option"
 										/>
-										
 									</>
 								))}
 
 								<Message
 									visible={this.state.questionError || this.state.optionError}
 									error
-									header={<Header as='h3' textAlign='left' content="Invalid Inputs"/>}
+									header={
+										<Header as="h3" textAlign="left" content="Invalid Inputs" />
+									}
 									content="Please check your inputs again. All fields are required."
 								/>
 							</Form.Field>

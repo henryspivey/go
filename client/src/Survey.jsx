@@ -125,8 +125,8 @@ export default class Survey extends Component {
 
 		this.setState(
 			{
-				emailValid: emailValid,
-				ageValid: ageValid
+				emailValid,
+				ageValid
 			},
 			this.validateForm
 		);
