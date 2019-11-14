@@ -191,7 +191,7 @@ export default class Survey extends Component {
 					<Card fluid>
 						<Card.Content>
 							<Form onSubmit={this.onSubmit}>
-								{questions.map((question, i) => (
+								{questions && questions.map((question, i) => (
 									<>
 										<Header as="h2" textAlign="left" dividing>
 											{question.question}
