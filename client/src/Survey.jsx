@@ -42,14 +42,13 @@ export default class Survey extends Component {
 		const { country, email, questions, disabled } = this.state;
 		age = parseInt(age);
 
-		const validVotes = questions.map(question => {
-			this.validateOptions(question);
+		const validVotes = questions.map(question => {			
 			if (!disabled) {
 				return {
 					question: `${question.question}`,
-					response: question.options && question.options
-						.filter(option => option.selected === true)
-						
+					response:
+						question.options &&
+						question.options.filter(option => option.selected === true)
 				};
 			}
 		});
@@ -71,7 +70,7 @@ export default class Survey extends Component {
 					}
 				)
 				.then(response => {
-					this.setState({voted: !this.state.voted})
+					this.setState({ voted: !this.state.voted });
 				})
 				.catch(function(error) {
 					console.log(error);
@@ -81,8 +80,7 @@ export default class Survey extends Component {
 
 	handleRadioChange = ({ target }) => {
 		const questions = this.state.questions;
-		const newOptions = questions.map((question, i) => {
-			this.validateOptions(question)
+		const newOptions = questions.map((question, i) => {			
 			if (question.question !== target.name) return question;
 			return {
 				...question,
@@ -91,9 +89,7 @@ export default class Survey extends Component {
 					return { ...option, selected: checked };
 				})
 			};
-			
 		});
-
 
 		this.setState({ questions: newOptions });
 	};
@@ -134,14 +130,6 @@ export default class Survey extends Component {
 
 	validateForm = () => {
 		this.setState({ disabled: !this.state.emailValid && !this.state.ageValid });
-	};
-
-	validateOptions = question => {
-		const checked = question.options.filter(option => option.selected === true);
-		
-		if (checked.length === 0) {
-			this.setState({ disabled: !this.state.disabled });
-		}
 	};
 
 	selectCountry = (e, data) => {
@@ -241,7 +229,7 @@ export default class Survey extends Component {
 
 								<Message
 									visible={disabled}
-									error								
+									error
 									header={
 										<Header as="h3" textAlign="left" content="Invalid Inputs" />
 									}
@@ -251,7 +239,11 @@ export default class Survey extends Component {
 									visible={voted}
 									success
 									header={
-										<Header as="h3" textAlign="left" content="Thanks for voting!" />
+										<Header
+											as="h3"
+											textAlign="left"
+											content="Thanks for voting!"
+										/>
 									}
 									content="You're all set."
 								/>
