@@ -20,6 +20,7 @@ func main() {
 	r := router.Router()	
 	buildHandler := http.FileServer(http.Dir("./client/build"))
 	r.PathPrefix("/").Handler(buildHandler)
+	r.PathPrefix("/survey").Handler(buildHandler)
 
 
 	staticHandler := http.FileServer(http.Dir("./client/build/static"))
