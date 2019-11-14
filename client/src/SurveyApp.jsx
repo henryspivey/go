@@ -4,11 +4,11 @@ import {
 	Card,
 	Header,
 	Form,
-	Label,
 	Segment,
 	Grid,
 	Button,
-	Input
+	Input,
+	Message
 } from "semantic-ui-react";
 import SurveyCard from "./SurveyCard";
 
@@ -16,23 +16,26 @@ class SurveyApp extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {			
+		this.state = {
 			surveys: [],
-			questions: [{ question: "", options: [{ text: "", selected: false }]}],		
-			votes: [],				
-			disabled: false
+			questions: [{ question: "", options: [{ text: "", selected: false }] }],
+			votes: [],
+			disabled: false,
+			questionError: false,
+			optionError: false
 		};
-
 	}
 
 	componentDidMount() {
 		this.getSurveys();
 	}
 
-	onQuestionChange = (idx) => e => {
+	onQuestionChange = idx => e => {
 		const questions = this.state.questions;
-
 		questions[idx].question = e.target.value;
+		if (questions[idx].question === "") {
+			this.setState({ questionError: !this.state.questionError });
+		} 
 		this.setState({
 			questions
 		});
@@ -40,8 +43,7 @@ class SurveyApp extends Component {
 
 	onSubmit = () => {
 		let { questions, votes } = this.state;
-		// const optionsText = options.map(option => option.text);
-		// const votes = Array.from({ length: options.length }, () => 0);
+
 		axios
 			.post(
 				"/api/survey",
@@ -55,7 +57,7 @@ class SurveyApp extends Component {
 					}
 				}
 			)
-			.then(res => {				
+			.then(res => {
 				this.getSurveys();
 			})
 			.catch(function(error) {
@@ -64,7 +66,7 @@ class SurveyApp extends Component {
 		this.setState({ question: "", options: [{ text: "", selected: false }] });
 	};
 
-	getSurveys = () => {		
+	getSurveys = () => {
 		axios.get("/api/survey").then(res => {
 			const data = res.data;
 			if (data) {
@@ -92,20 +94,18 @@ class SurveyApp extends Component {
 		const { questions } = this.state;
 		const questionIdx = e;
 		questions[questionIdx].options.push({ text: "", selected: false });
-		this.setState({ questions: questions });
+		this.setState({ questions });
 	};
 
-	removeOption = idx => () => {
-		this.setState({
-			options: this.state.options.filter((s, sidx) => idx !== sidx)
-		});
-	};
 
 	handleOptionChange = (idx, optionIdx) => e => {
 		const questions = this.state.questions;
 
 		const newOptions = questions[idx].options.map((option, i) => {
 			if (i !== optionIdx) return option;
+			if(e.target.value === "") {
+				this.setState({optionError: !this.state.optionError})
+			}
 			return { ...option, text: e.target.value };
 		});
 		questions[idx].options = newOptions;
@@ -113,7 +113,7 @@ class SurveyApp extends Component {
 	};
 
 	render() {
-		const { questions, title, options, country, region } = this.state;
+		const { questions } = this.state;
 		return (
 			<>
 				<Header as="h2">Survey App</Header>
@@ -123,7 +123,8 @@ class SurveyApp extends Component {
 							<Form.Field>
 								{questions.map((question, i) => (
 									<>
-										<Input
+										<Form.Input
+											required={true}
 											type="text"
 											name="title"
 											onChange={this.onQuestionChange(i)}
@@ -137,10 +138,11 @@ class SurveyApp extends Component {
 												<Form.Field inline key={optionIdx} required>
 													<Input
 														label={`Option # ${optionIdx + 1}`}
+														required={true}
 														type="text"
 														placeholder="Please enter an option"
 														onChange={this.handleOptionChange(i, optionIdx)}
-													/>
+													/>													
 												</Form.Field>
 											</>
 										))}
@@ -150,8 +152,16 @@ class SurveyApp extends Component {
 											onClick={() => this.addOption(i)}
 											content="Add Option"
 										/>
+										
 									</>
 								))}
+
+								<Message
+									visible={this.state.questionError || this.state.optionError}
+									error
+									header={<Header as='h3' textAlign='left' content="Invalid Inputs"/>}
+									content="Please check your inputs again. All fields are required."
+								/>
 							</Form.Field>
 							<Button
 								icon="plus"

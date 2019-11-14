@@ -1,24 +1,15 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {
-	CountryDropdown,
-	RegionDropdown,
-	CountryRegionData
-} from "react-country-region-selector";
-import VoteStatistics from "./VoteStatistics";
 import countryOptions from "./countries";
 import {
 	Form,
-	Radio,
-	Statistic,
 	Header,
-	Container,
 	Card,
-	Grid,
 	Label,
 	Dropdown,
 	Button,
-	Input
+	Input,
+	Message
 } from "semantic-ui-react";
 
 export default class Survey extends Component {
@@ -30,7 +21,11 @@ export default class Survey extends Component {
 			country: "",
 			age: 0,
 			email: "",
-			questions: []
+			questions: [],
+			ageValid: false,
+			emailValid: false,
+			disabled: true,
+			voted: false
 		};
 	}
 
@@ -41,51 +36,53 @@ export default class Survey extends Component {
 		}
 	}
 
-
 	onSubmit = () => {
 		const { id } = this.props.match.params;
 		let { age } = this.state;
-		const { country, email, questions } = this.state;
+		const { country, email, questions, disabled } = this.state;
 		age = parseInt(age);
-		
-		const voted = questions.map(question => {			
-			return {
-				question: `${question.question}`, 
-				response: question.options.filter(option => option.selected === true).reduce(option => option.text)
-			};
-		})
 
+		const validVotes = questions.map(question => {
+			this.validateOptions(question);
+			if (!disabled) {
+				return {
+					question: `${question.question}`,
+					response: question.options && question.options
+						.filter(option => option.selected === true)
+						
+				};
+			}
+		});
 
-		console.log(voted)
-		
-		axios
-			.post(
-				`/api/survey/${id}/vote`,
-				{
-					email,
-					country,
-					age,
-					responses: voted
-				},
-				{
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded"
+		if (!disabled) {
+			axios
+				.post(
+					`/api/survey/${id}/vote`,
+					{
+						email,
+						country,
+						age,
+						responses: validVotes
+					},
+					{
+						headers: {
+							"Content-Type": "application/x-www-form-urlencoded"
+						}
 					}
-				}
-			)
-			.then((response) => {
-				
-				console.log(response.data);
-			})
-			.catch(function(error) {
-				console.log(error);
-			});
-	
+				)
+				.then(response => {
+					this.setState({voted: !this.state.voted})
+				})
+				.catch(function(error) {
+					console.log(error);
+				});
+		}
 	};
 
 	handleRadioChange = ({ target }) => {
 		const questions = this.state.questions;
 		const newOptions = questions.map((question, i) => {
+			this.validateOptions(question)
 			if (question.question !== target.name) return question;
 			return {
 				...question,
@@ -94,16 +91,60 @@ export default class Survey extends Component {
 					return { ...option, selected: checked };
 				})
 			};
+			
 		});
+
 
 		this.setState({ questions: newOptions });
 	};
 
 	handleInputChange = e => {
-		this.setState({ [e.target.name]: e.target.value });
+		const name = e.target.name;
+		const value = e.target.value;
+		this.setState({ [name]: value }, () => {
+			this.validateField(name, value);
+		});
 	};
 
-	selectCountry = (e, data) =>{		
+	validateField = (fieldName, value) => {
+		let emailValid = this.state.emailValid;
+		let ageValid = this.state.ageValid;
+
+		switch (fieldName) {
+			case "email":
+				emailValid =
+					value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i) &&
+					value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i).length > 0;
+				break;
+			case "age":
+				ageValid = value > 0 && !isNaN(value);
+				break;
+			default:
+				break;
+		}
+
+		this.setState(
+			{
+				emailValid: emailValid,
+				ageValid: ageValid
+			},
+			this.validateForm
+		);
+	};
+
+	validateForm = () => {
+		this.setState({ disabled: !this.state.emailValid && !this.state.ageValid });
+	};
+
+	validateOptions = question => {
+		const checked = question.options.filter(option => option.selected === true);
+		
+		if (checked.length === 0) {
+			this.setState({ disabled: !this.state.disabled });
+		}
+	};
+
+	selectCountry = (e, data) => {
 		this.setState({ country: data.value });
 	};
 
@@ -122,11 +163,18 @@ export default class Survey extends Component {
 			});
 	};
 
-
-
 	render() {
 		if (!this.state.loading) {
-			const { questions, statistics, country, age, email } = this.state;
+			const {
+				questions,
+				country,
+				age,
+				email,
+				emailValid,
+				ageValid,
+				disabled,
+				voted
+			} = this.state;
 			return (
 				<div>
 					<Card fluid>
@@ -159,36 +207,55 @@ export default class Survey extends Component {
 									<Label>Choose your country</Label>
 									<Dropdown
 										placeholder="Select Country"
-										fluid										
+										fluid
 										selection
-										options={countryOptions}										
+										options={countryOptions}
 										onChange={this.selectCountry}
 										value={country}
 									/>
 								</Form.Field>
 								<Form.Group widths="equal">
 									<Form.Field>
-										<Input
+										<Form.Input
 											type="number"
 											name="age"
 											onChange={this.handleInputChange}
 											value={age}
 											fluid
 											label="What is your age?"
+											required={true}
 										/>
 									</Form.Field>
 									<Form.Field>
-										<Input
+										<Form.Input
 											type="email"
 											name="email"
 											onChange={this.handleInputChange}
 											value={email}
 											fluid
 											label="What is your email?"
+											required={true}
 										/>
 									</Form.Field>
 								</Form.Group>
-								<Button type="submit" content="Vote" />
+
+								<Message
+									visible={disabled}
+									error								
+									header={
+										<Header as="h3" textAlign="left" content="Invalid Inputs" />
+									}
+									content="Please check your inputs again. All fields are required."
+								/>
+								<Message
+									visible={voted}
+									success
+									header={
+										<Header as="h3" textAlign="left" content="Thanks for voting!" />
+									}
+									content="You're all set."
+								/>
+								<Button type="submit" content="Vote" disabled={disabled} />
 							</Form>
 						</Card.Content>
 					</Card>
