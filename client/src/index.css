@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+
+.surveylink {
+	color: rgba(0,0,0,.8);
+	font-weight: bold;
+}
+
+.surveylink:hover {
+	color: #4183c4;
+}

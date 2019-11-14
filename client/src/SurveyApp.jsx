@@ -215,19 +215,17 @@ class SurveyApp extends Component {
 					</Card.Content>
 				</Card>
 
-				<Grid.Row>
-					<Segment>
+				<Grid.Row>					
 						<Header as="h2">Surveys</Header>
 						<Card.Group>
 							{this.state.surveys.length === 0 ? (
 								<Header>No surveys yet</Header>
 							) : (
 								this.state.surveys.map((item, index) => (
-									<SurveyCard key={item._id} {...item} />
+									<SurveyCard key={item._id} {...item} index={index}/>
 								))
 							)}
-						</Card.Group>
-					</Segment>
+						</Card.Group>					
 				</Grid.Row>
 			</>
 		);
