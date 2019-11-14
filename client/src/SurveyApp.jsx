@@ -148,7 +148,7 @@ class SurveyApp extends Component {
 	};
 
 	render() {
-		const { questions, questionError, optionError, generalError } = this.state;
+		const { questions, questionError, optionError, generalError, surveys} = this.state;
 		return (
 			<>
 				<Header as="h2">Survey App</Header>
@@ -223,10 +223,10 @@ class SurveyApp extends Component {
 				<Grid.Row>
 					<Header as="h2">Surveys</Header>
 					<Card.Group>
-						{this.state.surveys.length === 0 ? (
+						{surveys.length === 0 ? (
 							<Header>No surveys yet</Header>
 						) : (
-							this.state.surveys.map((item, index) => (
+							surveys && surveys.map((item, index) => (
 								<SurveyCard key={item._id} {...item} index={index} />
 							))
 						)}
