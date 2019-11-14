@@ -109,11 +109,14 @@ export default class Survey extends Component {
 		switch (fieldName) {
 			case "email":
 				emailValid =
+					value.length > 0 &&
 					value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i) &&
 					value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i).length > 0;
 				break;
 			case "age":
-				ageValid = value > 0 && !isNaN(value);
+				const parsed = parseInt(value)
+				ageValid = parsed > 0 && !isNaN(parsed);
+				
 				break;
 			default:
 				break;
@@ -124,12 +127,15 @@ export default class Survey extends Component {
 				emailValid,
 				ageValid
 			},
-			this.validateForm
+			() => {
+				this.validateForm(emailValid, ageValid)
+			}
 		);
 	};
 
-	validateForm = () => {
-		this.setState({ disabled: !this.state.emailValid && !this.state.ageValid });
+	validateForm = (emailValid, ageValid) => {
+		console.log(emailValid, ageValid)
+		this.setState({ disabled: emailValid && ageValid });
 	};
 
 	selectCountry = (e, data) => {
@@ -228,7 +234,7 @@ export default class Survey extends Component {
 								</Form.Group>
 
 								<Message
-									visible={disabled}
+									visible={true && !disabled}
 									error
 									header={
 										<Header as="h3" textAlign="left" content="Invalid Inputs" />
@@ -247,7 +253,7 @@ export default class Survey extends Component {
 									}
 									content="You're all set."
 								/>
-								<Button type="submit" content="Vote" disabled={disabled} />
+								<Button type="submit" content="Vote" disabled={!disabled} />
 							</Form>
 						</Card.Content>
 					</Card>
