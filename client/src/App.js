@@ -13,7 +13,7 @@ function App() {
         <Router>
 	        <Switch>
 	          <Route exact path='/' component={SurveyApp} />
-	          <Route path='/survey/:id' component={Survey} />
+	          <Route exact path='/survey/:id' component={Survey} />
 	        </Switch>
       	</Router>  
       </Grid.Column>	    
