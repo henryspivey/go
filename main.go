@@ -21,7 +21,7 @@ func main() {
 
 	buildHandler := http.FileServer(http.Dir("client/build"))
 	r.PathPrefix("/").Handler(buildHandler)
-	r.PathPrefix("/survey").Handler(buildHandler)
+	r.PathPrefix("/survey").Subrouter()
 	staticHandler := http.FileServer(http.Dir("client/build/static"))
 	r.PathPrefix("/static/").Handler(staticHandler)
 
