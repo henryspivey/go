@@ -21,13 +21,9 @@ func main() {
 
 	buildHandler := http.FileServer(http.Dir("client/build"))
 
-	http.HandleFunc("/survey/{id}", func(w http.ResponseWriter, r *http.Request){
-		http.ServeFile(w, r, "client/build/index.html");
-	});
+	r.PathPrefix("/survey/{id}").Handler(http.StripPrefix("/survey/{id}", buildHandler))
 
 	r.PathPrefix("/").Handler(buildHandler)
-
-
 
 
 	staticHandler := http.FileServer(http.Dir("client/build/static"))
