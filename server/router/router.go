@@ -11,13 +11,11 @@ func Router() *mux.Router {
 	router := mux.NewRouter()
 
 
-	buildHandler := http.FileServer(http.Dir("../../client/build"))
+	buildHandler := http.FileServer(http.Dir("../client/build"))
 	router.PathPrefix("/").Handler(buildHandler)
-
-
-
-	staticHandler := http.FileServer(http.Dir("../../client/build/static"))
+	staticHandler := http.FileServer(http.Dir("../client/build/static"))
 	router.PathPrefix("/static/").Handler(staticHandler)
+
 	router.HandleFunc("/api/survey", middleware.GetAllSurveys).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/survey/{id}", middleware.GetSurvey).Methods("GET", "OPTIONS")
 	router.HandleFunc("/api/survey", middleware.CreateSurvey).Methods("POST", "OPTIONS")		
