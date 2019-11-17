@@ -20,7 +20,13 @@ func main() {
 	r := router.Router()	
 
 	buildHandler := http.FileServer(http.Dir("client/build"))
+
+	http.HandleFunc("/survey/{id}", func(w http.ResponseWriter, r *http.Request){
+		http.ServeFile(w, r, "client/build/index.html");
+	});
+
 	r.PathPrefix("/").Handler(buildHandler)
+
 
 
 
