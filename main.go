@@ -18,7 +18,9 @@ func getPort() string {
 
 func main() {
 	r := router.Router()	
+
 	buildHandler := http.FileServer(http.Dir("client/build"))
+	r.PathPrefix("/survey/{id}").Handler(http.StripPrefix("/survey/{id}", buildHandler))
 	r.PathPrefix("/").Handler(buildHandler)
 
 
