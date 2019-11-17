@@ -60,7 +60,6 @@ func GetAllSurveys(w http.ResponseWriter, r *http.Request) {
 	payload := getAllSurveys()
 	json.NewEncoder(w).Encode(payload)
 
-
 }
 
 func CreateSurvey(w http.ResponseWriter, r *http.Request) {
