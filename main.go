@@ -21,7 +21,7 @@ func main() {
 
 	buildHandler := http.FileServer(http.Dir("client/build"))
 
-	r.PathPrefix("/survey/{id}").Handler(http.StripPrefix("/survey/{id}", buildHandler))
+	r.PathPrefix("/survey/*").Handler(http.StripPrefix("/survey/*", buildHandler))
 	r.PathPrefix("/").Handler(buildHandler)
 
 
