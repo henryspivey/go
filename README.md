@@ -6,7 +6,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
-### Frontend: React
+### Frontend: React + Semantic UI library
 ### Backend:  Go
 ### DB:  Mongo
 
@@ -19,7 +19,8 @@ You will also see any lint errors in the console.
 
 ### Why React?
 
-React is a great way to build web applications in JavaScript.  I chose React because it is a library that I'm very familiar with.  In addition, it makes reusability of components really easy. To see the components, please see the `client/src` directory.  
+React is a great way to build web applications in JavaScript.  I chose React because it is a library that I'm very familiar with.  In addition, it makes reusability of components really easy. To see the components, please see the `client/src` directory and the screenshot below. In addition, the [Semantic UI library](https://react.semantic-ui.com/) offers a great variety of components to use in your application.
+![build post req](screenshots/surveyhome.png)
 
 ### Why Go?
 Before this project, I had never used Go to build a web application before.  I welcomed the challenge of learning a new language and the nuances therein.  I also wanted to use it to show that I'm not tied to one particular language.  In the process I found that Go comes with all of the tools necessary to build an application: modify HTTP headers, routing, structs to model your data, JSON encoding and much more.  
@@ -67,7 +68,6 @@ It turns out that the Mongo has incredibly well written documentation for Go use
 
 In the status window you will see the link to the newly created survey which should look something like this:
 ![post req result](screenshots/postresult.png)
-
 
 
 
