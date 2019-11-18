@@ -29,12 +29,44 @@ Before this project, I had never used Go to build a web application before.  I w
 It turns out that the Mongo has incredibly well written documentation for Go users.  I referenced this a lot during development. See link here: [Mongo GO Documentation](https://docs.mongodb.com/manual/crud/) 
 
 ### Tools used
-[Go Heroku build pack](https://github.com/heroku/heroku-buildpack-go)
-[Heroku](https://dashboard.heroku.com/login)
-[Glide for dependency management](https://github.com/Masterminds/glide)
-[Postman for API testing](https://www.getpostman.com/)
+1. [Go Heroku build pack](https://github.com/heroku/heroku-buildpack-go)
+2. [Heroku](https://dashboard.heroku.com/login)
+3. [Glide for dependency management](https://github.com/Masterminds/glide)
+4. [Postman for API testing](https://www.getpostman.com/)
 
 ### How to use the API
+1. Send a POST request to `https://limitless-garden-10375.herokuapp.com/api/survey` with a body following a  structure like this:
+```json
+{
+	"questions": [{
+		"question": "What is your favorite color?",
+		"options": [{
+			"text": "Red",
+			"selected": false
+		}, {
+			"text": "Blue",
+			"selected": false
+		}, {
+			"text": "Green",
+			"selected": false
+		}, {
+			"text": "Orange",
+			"selected": false
+		}, {
+			"text": "Yellow",
+			"selected": false
+		}, {
+			"text": "Grey",
+			"selected": false
+		}]
+	}],
+	"votes": []
+}
+```
+![build post req](screenshots/buildpostreq.png)
+
+In the status window you will see the link to the newly created survey which should look something like this:
+![post req result](screenshots/postresult.png)
 
 
 
