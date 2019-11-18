@@ -29,7 +29,8 @@ export default class Survey extends Component {
 			countryValid: false,
 			disabled: true,
 			voted: false,
-			generalError: false
+			generalError: false,
+			showResults: false
 		};
 	}
 
@@ -54,15 +55,15 @@ export default class Survey extends Component {
 		age = parseInt(age);
 
 		const validVotes = questions.map(question => {
-			if (!disabled) {
-				return {
-					question: `${question.question}`,
-					response:
-						question.options &&
-						question.options.filter(option => option.selected === true)
-				};
-			}
+			
+			return {
+				question: `${question.question}`,
+				response:
+					question.options.filter(option => option.selected === true)
+			};
+			
 		});
+		
 
 		if (!voted) {
 			axios
@@ -184,7 +185,8 @@ export default class Survey extends Component {
 				email,
 				disabled,
 				voted,
-				generalError
+				generalError,
+				showResults
 			} = this.state;
 			return (
 				<div>
@@ -279,6 +281,7 @@ export default class Survey extends Component {
 							</Form>
 						</Card.Content>
 					</Card>
+					{showResults}
 				</div>
 			);
 		} else {
