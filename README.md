@@ -76,4 +76,14 @@ Here's some of the things that I want to improve:
 1. Add a results page to show the responses.  
 2. Add JWT to force users to send an AUTH header to protect the API endpoints.
 3. Use React Hooks
-4. Use .ENV file to hold variables such as Mongo DB URL and authentication info. 
+4. Use .ENV or configuration file to hold variables such as Mongo DB URL and authentication info. 
+
+
+### Other
+Survey with validation errors
+![validation err](screenshots/validationerr.png)
+
+
+Survey with vote success
+![validation err](screenshots/votesuccess.png)
+
